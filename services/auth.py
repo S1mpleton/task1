@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 from sqlmodel import Session
 
-from infrastructure.database.crud import CRUD
-from infrastructure.database.models import User
-
 from core.security.password import verify_password
+from infrastructure.database.models.user import User
+
+from infrastructure.database.repositories import users as users_repo
 
 
 class AuthService:
@@ -16,10 +16,7 @@ class AuthService:
         session: Session
     ) -> User:
 
-        user = CRUD.get_user_full_by_email(
-            email=email,
-            session=session,
-        )
+        user = users_repo.get_user_by_email(session, email)
 
         if user is None:
             raise HTTPException(

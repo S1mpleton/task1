@@ -6,9 +6,9 @@ from sqlmodel import Session
 from .config import engine
 
 
+# Fast API documentation code
 def get_session():
     with Session(engine) as session:
         yield session
-
 
 SessionDep = Annotated[Session, Depends(get_session)]

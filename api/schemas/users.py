@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 
 class CreateUser(BaseModel):
-    name: str = Field(default="Guest")
+    nickname: str = Field(default="Guest")
     email: EmailStr = Field(...)
     password: str = Field(...)
 
