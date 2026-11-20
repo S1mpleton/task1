@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
-from core.jwt.utils import get_current_user_id
+from core.jwt.validate import ValidateToken
 from services import users as users_service
 
 from api.schemas.users import ResponseUser, CreateUser
@@ -27,20 +27,20 @@ async def create_user(
 
 
 @router.get(
-    "/getMe",
+    "get/me",
     response_model=ResponseUser)
 async def get_me(
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep
 ):
     return users_service.get_user(session, user_id)
 
 
 @router.delete(
-    "/delteMe",
+    "/delete/me",
     status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me(
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep
 ) -> None:
     users_service.delete_user(session, user_id)

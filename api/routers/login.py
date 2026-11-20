@@ -3,9 +3,8 @@ from typing import Annotated
 from fastapi import Form, APIRouter, HTTPException, status
 from pydantic import SecretStr
 
-from core.jwt.utils import create_access_token
-
 from api.schemas.users import TokenData
+from core.jwt.getter import get_access_token
 from infrastructure.database.session import SessionDep
 from services.auth import AuthService
 
@@ -38,7 +37,7 @@ async def login(
             detail="User not found",
         )
 
-    token = create_access_token(user_id=user.id)
+    token = get_access_token(user_id=user.id, email=user.email)
 
     return TokenData(
         access_token=token,

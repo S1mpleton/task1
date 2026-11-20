@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlmodel import Session, select, or_, and_
+from sqlmodel import Session, select, or_, and_, asc
 
 from domain.tasks import TaskStatus, CursorTask
 from infrastructure.database.models.task import Task
@@ -47,7 +47,7 @@ def get_tasks(
 
     statement = (
         statement
-        .order_by(Task.created_at.asc(), Task.id.asc())
+        .order_by(asc(Task.created_at), asc(Task.id))
         .offset(offset)
         .limit(limit)
     )
@@ -87,8 +87,8 @@ def get_tasks_by_cursor(
     statement = (
         statement
         .order_by(
-            Task.created_at.asc(),
-            Task.id.asc()
+            asc(Task.created_at),
+            asc(Task.id)
         )
         .limit(limit + 1)
     )

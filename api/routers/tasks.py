@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import Depends, APIRouter, status, Query
 
 from api.schemas.tasks import ResponseTask, CreateTask, TaskPage
-from core.jwt.utils import get_current_user_id
+from core.jwt.validate import ValidateToken
 from domain.tasks import TaskStatus
 from infrastructure.database.session import SessionDep
 from services import tasks as tasks_service
@@ -21,7 +21,7 @@ router = APIRouter(
 )
 async def create_task(
         task_data: CreateTask,
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep
 ):
     return tasks_service.create_task(session, task_data, user_id)
@@ -34,7 +34,7 @@ async def create_task(
     response_model=List[ResponseTask],
 )
 async def get_tasks(
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep,
         limit: Annotated[int, Query(ge=1, le=100)] = 20,
         offset: Annotated[int, Query(ge=0)] = 0,
@@ -49,7 +49,7 @@ async def get_tasks(
     description="pagination by cursor",
 )
 async def get_tasks_by_cursor(
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep,
         limit: Annotated[int, Query(ge=1, le=100)] = 20,
         cursor_task_data: str | None = None,
@@ -63,28 +63,34 @@ async def get_tasks_by_cursor(
         cursor_task_data,
         task_status
     )
-    return TaskPage(tasks=tasks_list, next_cursor=cursor)
+    return TaskPage(
+        tasks=[
+            ResponseTask.model_validate(task)
+            for task in tasks_list
+        ],
+        next_cursor=cursor
+    )
 
 
 @router.get(
-    "/{task_id}",
+    "get/{task_id}",
     response_model=ResponseTask
 )
 async def get_task(
         task_id: int,
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep
 ):
     return tasks_service.get_task(session, task_id, user_id)
 
 
 @router.delete(
-    "/{task_id}",
+    "delete/{task_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_task(
         task_id: int,
-        user_id: Annotated[int, Depends(get_current_user_id)],
+        user_id: Annotated[int, Depends(ValidateToken())],
         session: SessionDep
 ) -> None:
     tasks_service.delete_task(session, user_id, task_id)

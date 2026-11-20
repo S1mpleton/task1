@@ -1,10 +1,27 @@
-import os
-
-from fastapi.security import OAuth2PasswordBearer
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-SECRET_KEY = "JWT_SECRET_KEY"
-ALGORITHM = "HS256"
-TOKEN_EXPIRE_MINUTES = 30
+TOKEN_TYPE_FIELD = "type"
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/login")
+ACCESS_TOKEN_TYPE = "access"
+REFRESH_TOKEN_TYPE = "refresh"
+
+
+class JWTSettings(BaseSettings):
+    secret_key: str
+    algorithm: str
+    access_token_expire_minutes: int = 30
+    refresh_token_expire_minutes: int = 42_000
+
+    aws_access_key_id: str
+    aws_secret_access_key: str
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore",
+    )
+
+
+jwt_settings = JWTSettings()
+
+

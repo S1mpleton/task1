@@ -5,12 +5,20 @@ from fastapi import FastAPI
 
 from api import router_api
 from infrastructure.database.config import create_db_and_tables
+from infrastructure.storage.s3 import S3Storage
 
 
 @asynccontextmanager
 async def lifespan(app_: FastAPI):
     create_db_and_tables()
-    yield
+
+    storage = S3Storage()
+    app.state.s3_storage = storage
+
+    try:
+        yield
+    finally:
+        storage.close()
 
 
 app = FastAPI(lifespan=lifespan)

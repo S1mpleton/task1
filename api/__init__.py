@@ -9,6 +9,7 @@ router_api = APIRouter(
 router_api.include_router(login_router)
 router_api.include_router(users_router)
 router_api.include_router(tasks_router)
+router_api.include_router(files_router)
 
 
 __all__ = (
