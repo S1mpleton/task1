@@ -8,7 +8,7 @@ from domain.files import UploadStatus
 class UploadSession(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
-    file_id: int = Field(foreign_key="files.id", unique=True, index=True)
+    file_id: int = Field(foreign_key="file.id", unique=True, index=True)
 
     upload_id: str
 

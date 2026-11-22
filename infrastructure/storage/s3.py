@@ -110,9 +110,11 @@ class S3Storage:
 
         for page in pages:
             for part in page.get("Parts", []):
+                print("PART:", part)
                 parts.append({
                     "PartNumber": part["PartNumber"],
                     "ETag": part["ETag"],
+                    "Size": part["Size"]
                 })
 
         return sorted(
@@ -130,12 +132,20 @@ class S3Storage:
         if not parts:
             raise ValueError("No uploaded parts")
 
+        completed_parts = [
+            {
+                "PartNumber": part["PartNumber"],
+                "ETag": part["ETag"],
+            }
+            for part in parts
+        ]
+
         self._client.complete_multipart_upload(
             Bucket=self.bucket,
             Key=object_key,
             UploadId=upload_id,
             MultipartUpload={
-                "Parts": parts,
+                "Parts": completed_parts,
             },
         )
 

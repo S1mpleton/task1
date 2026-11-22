@@ -59,7 +59,7 @@ async def init_upload_multipart_file(
         storage: S3StorageDep,
         upload_init_request: FileUploadInitRequest
 ):
-    file, upload_id = file_service.init_upload_multipart_file(
+    file, upload_session = file_service.init_upload_multipart_file(
         session=session,
         storage=storage,
         owner_id=user_id,
@@ -75,7 +75,8 @@ async def init_upload_multipart_file(
 
     return FileMultipartUploadInitResponse(
         file_id=file_id,
-        upload_id=upload_id
+        upload_id=upload_session.upload_id,
+        part_size=upload_session.part_size
     )
 
 @router.post(

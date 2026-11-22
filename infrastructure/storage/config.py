@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-EXPIRES_IN = 300
+EXPIRES_IN = 2200
 
 class S3Settings(BaseSettings):
     s3_endpoint: str

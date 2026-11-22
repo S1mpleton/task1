@@ -20,6 +20,7 @@ class FileUploadInitResponse(BaseModel):
 class FileMultipartUploadInitResponse(BaseModel):
     file_id: int
     upload_id: str
+    part_size: int
 
 class FileMultipartUploadResponse(BaseModel):
     part_number: int

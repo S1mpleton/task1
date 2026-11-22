@@ -72,7 +72,7 @@ def init_upload_multipart_file(
         file_name: str,
         content_type: str,
         size: int,
-) -> tuple[File, str]:
+) -> tuple[File, UploadSession]:
     file = registry_file_upload(
         session=session,
         owner_id=owner_id,
@@ -87,7 +87,7 @@ def init_upload_multipart_file(
     )
 
     try:
-        upload_sessions_repo.create_upload_session(
+        upload_session = upload_sessions_repo.create_upload_session(
             session=session,
             file_id=file.id, #  raise RuntimeError("File ID was not generated")
             upload_id=upload_id,
@@ -107,7 +107,7 @@ def init_upload_multipart_file(
 
         raise
 
-    return file, upload_id
+    return file, upload_session
 
 
 def upload_part_file(
